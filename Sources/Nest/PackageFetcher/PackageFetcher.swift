@@ -105,7 +105,7 @@ public struct PackageFetcher {
                     destination: destination,
                     identifier: identifier,
                     resolvedVersion: identifier.version,
-                    cleanupOnError: false  // Don't cleanup existing packages on validation failure
+                    cleanupOnError: false // Don't cleanup existing packages on validation failure
                 )
             case let .git(_, version):
                 // Update existing Git repository to latest version
@@ -118,7 +118,7 @@ public struct PackageFetcher {
                     destination: destination,
                     identifier: identifier,
                     resolvedVersion: resolvedVersion,
-                    cleanupOnError: false  // Don't cleanup existing packages on validation failure
+                    cleanupOnError: false // Don't cleanup existing packages on validation failure
                 )
             case .name:
                 // GitHub search should have been resolved to a Git URL
@@ -206,7 +206,7 @@ public struct PackageFetcher {
             destination: destination,
             identifier: identifier,
             resolvedVersion: resolvedVersion,
-            cleanupOnError: true  // Clean up failed clones
+            cleanupOnError: true // Clean up failed clones
         )
     }
 
@@ -330,7 +330,7 @@ public struct PackageFetcher {
             destination: destination,
             identifier: identifier,
             resolvedVersion: identifier.version,
-            cleanupOnError: true  // Clean up failed copies
+            cleanupOnError: true // Clean up failed copies
         )
     }
 
