@@ -14,6 +14,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.6.0"),
         .package(url: "https://github.com/swiftlang/swift-subprocess", from: "0.1.0"),
+        .package(url: "https://github.com/apple/swift-system", from: "1.6.1"),
     ],
     targets: [
         .executableTarget(
@@ -27,6 +28,7 @@ let package = Package(
             name: "Nest",
             dependencies: [
                 .product(name: "Subprocess", package: "swift-subprocess"),
+                .product(name: "SystemPackage", package: "swift-system"),
             ]
         ),
         .testTarget(
