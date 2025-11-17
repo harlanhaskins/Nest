@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nest - Swift Package Installer</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: light-dark(#ffffff, #000000);
+            color: light-dark(#000000, #ffffff);
+            padding: 40px 20px;
+            gap: 40px;
+        }
+
+        .container {
+            padding: 48px;
+            max-width: 600px;
+            background: light-dark(#f5f5f5, #1a1a1a);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: light-dark(#000000, #ffffff);
+        }
+
+        p {
+            font-size: 18px;
+            color: light-dark(#666666, #999999);
+            margin-bottom: 32px;
+        }
+
+        .install-box {
+            display: flex;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        .install-command {
+            flex: 1;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 16px;
+            padding: 12px 16px;
+            border: 1px solid light-dark(#d0d0d0, #3a3a3a);
+            border-radius: 6px;
+            background: light-dark(#ffffff, #2a2a2a);
+            color: light-dark(#1e1e1e, #f8f8f2);
+        }
+
+        .copy-button {
+            background: #de5d43;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .copy-button:hover {
+            background: #c94d35;
+        }
+
+        .copy-button:active {
+            background: #b43d25;
+        }
+
+        .examples {
+            max-width: 1050px;
+            width: 100%;
+        }
+
+        .examples h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: light-dark(#000000, #ffffff);
+        }
+
+        .example-item {
+            margin-bottom: 20px;
+        }
+
+        .example-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .example-item h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: light-dark(#333333, #dddddd);
+            font-weight: 600;
+        }
+
+        .example-code {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 14px;
+            padding: 12px 16px;
+            background: light-dark(#f5f5f5, #1a1a1a);
+            color: light-dark(#1e1e1e, #f8f8f2);
+            border: 1px solid light-dark(#d0d0d0, #3a3a3a);
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        @supports not (color: light-dark(#fff, #000)) {
+            @media (prefers-color-scheme: light) {
+                body {
+                    background: #ffffff;
+                    color: #000000;
+                }
+                .container {
+                    background: #f5f5f5;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+                h1 {
+                    color: #000000;
+                }
+                p {
+                    color: #666666;
+                }
+                .install-command {
+                    background: #ffffff;
+                    color: #1e1e1e;
+                    border-color: #d0d0d0;
+                }
+                .examples h2 {
+                    color: #000000;
+                }
+                .example-item h3 {
+                    color: #333333;
+                }
+                .example-code {
+                    background: #f5f5f5;
+                    color: #1e1e1e;
+                    border-color: #d0d0d0;
+                }
+            }
+
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background: #000000;
+                    color: #ffffff;
+                }
+                .container {
+                    background: #1a1a1a;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                }
+                h1 {
+                    color: #ffffff;
+                }
+                p {
+                    color: #999999;
+                }
+                .install-command {
+                    background: #2a2a2a;
+                    color: #f8f8f2;
+                    border-color: #3a3a3a;
+                }
+                .examples h2 {
+                    color: #ffffff;
+                }
+                .example-item h3 {
+                    color: #dddddd;
+                }
+                .example-code {
+                    background: #1a1a1a;
+                    color: #f8f8f2;
+                    border-color: #3a3a3a;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nest</h1>
+        <p>Swift package installer for the command line</p>
+
+        <div class="install-box">
+            <input type="text" class="install-command" id="install-command" value="curl -fsSL nest.harlanhaskins.com/install.sh | bash" readonly>
+            <button class="copy-button" onclick="copyCommand()">Copy</button>
+        </div>
+    </div>
+
+    <div class="examples">
+        <h2>Common Examples</h2>
+
+        <div class="example-item">
+            <h3>Install by package name</h3>
+            <div class="example-code">nest install swift-format</div>
+        </div>
+
+        <div class="example-item">
+            <h3>Install by URL</h3>
+            <div class="example-code">nest install --url https://github.com/apple/swift-format</div>
+        </div>
+
+        <div class="example-item">
+            <h3>Install from local path</h3>
+            <div class="example-code">nest install --path ~/Projects/MySwiftTool</div>
+        </div>
+    </div>
+
+    <script>
+        function copyCommand() {
+            const command = document.getElementById('install-command').value;
+            navigator.clipboard.writeText(command).then(() => {
+                const button = document.querySelector('.copy-button');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

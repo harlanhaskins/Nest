@@ -209,7 +209,7 @@ public struct PackageBuilder {
         let result = try await Subprocess.run(
             .path("/usr/bin/swift"),
             arguments: ["package", "dump-package"],
-            workingDirectory: .init(packagePath),
+            workingDirectory: .init(packagePath.path()),
             output: .string(limit: 16 * 1024, encoding: UTF8.self)
         )
 
