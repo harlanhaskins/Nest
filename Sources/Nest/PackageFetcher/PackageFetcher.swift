@@ -281,8 +281,8 @@ public struct PackageFetcher {
                 source.path + "/", // Trailing slash means "contents of this directory"
                 destination.path + "/",
             ],
-            output: .string(limit: 16 * 1024, encoding: UTF8.self),
-            error: .string(limit: 16 * 1024, encoding: UTF8.self)
+            output: .string(limit: 1024 * 1024, encoding: UTF8.self),
+            error: .string(limit: 1024 * 1024, encoding: UTF8.self)
         )
 
         guard result.terminationStatus.isSuccess else {
@@ -415,8 +415,8 @@ public struct PackageFetcher {
                 .path("/usr/bin/git"),
                 arguments: Arguments(arguments),
                 workingDirectory: workingDirectory.map { FilePath($0.path()) },
-                output: .string(limit: 16 * 1024, encoding: UTF8.self),
-                error: .string(limit: 16 * 1024, encoding: UTF8.self)
+                output: .string(limit: 1024 * 1024, encoding: UTF8.self),
+                error: .string(limit: 1024 * 1024, encoding: UTF8.self)
             )
 
             return GitResult(

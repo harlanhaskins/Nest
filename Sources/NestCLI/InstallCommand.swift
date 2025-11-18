@@ -87,21 +87,19 @@ struct Install: AsyncParsableCommand {
         }
 
         // Build the package
-        print("Building package in release mode...")
+        print("\nBuilding package...")
         let builder = PackageBuilder(configuration: config)
         let buildResult = try await builder.build(at: fetchResult.packagePath)
 
         print("✓ Build complete")
-        print("  Found \(buildResult.executables.count) executable(s): \(buildResult.executables.map { $0.name }.joined(separator: ", "))")
 
         // Create symlinks
-        print("Installing...")
+        print("\nInstalling executables...")
         let installed = try builder.createSymlinks(for: buildResult)
 
         print("✓ Installation complete!")
-        print("  Installed executables:")
         for name in installed {
-            print("    • \(name)")
+            print("  • \(name)")
         }
     }
 

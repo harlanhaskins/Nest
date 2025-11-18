@@ -71,15 +71,18 @@ public struct PackageBuilder {
 
     /// Builds a package in release configuration and discovers executables
     public func build(at packagePath: URL) async throws -> BuildResult {
-        // Build the package in release mode
-        try await buildPackage(at: packagePath)
+        // First, discover executable products from the manifest
+        let executableNames = try await loadExecutableProducts(at: packagePath)
 
-        // Discover executables
-        let executables = try await discoverExecutables(at: packagePath)
-
-        guard !executables.isEmpty else {
+        guard !executableNames.isEmpty else {
             throw PackageBuilderError.noExecutablesFound(packagePath)
         }
+
+        // Build only the executable products (avoids building tests and libraries)
+        try await buildExecutables(executableNames, at: packagePath)
+
+        // Map executable names to their built binaries
+        let executables = try discoverBuiltExecutables(executableNames, at: packagePath)
 
         return BuildResult(executables: executables, packagePath: packagePath)
     }
@@ -158,37 +161,37 @@ public struct PackageBuilder {
 
     // MARK: - Private Methods
 
-    private func buildPackage(at packagePath: URL) async throws {
+    private func buildExecutables(_ productNames: [String], at packagePath: URL) async throws {
+        // Build each executable product explicitly (avoids building tests and libraries)
         // Inherit stdout/stderr from parent process so user can see build progress
-        do {
-            let result = try await Subprocess.run(
-                .path("/usr/bin/swift"),
-                arguments: ["build", "-c", "release"],
-                workingDirectory: FilePath(packagePath.path()),
-                output: .standardOutput,
-                error: .standardError
-            )
+        for productName in productNames {
+            do {
+                let result = try await Subprocess.run(
+                    .path("/usr/bin/swift"),
+                    arguments: ["build", "-c", "release", "--product", productName],
+                    workingDirectory: FilePath(packagePath.path()),
+                    output: .standardOutput,
+                    error: .standardError
+                )
 
-            guard result.terminationStatus.isSuccess else {
+                guard result.terminationStatus.isSuccess else {
+                    throw PackageBuilderError.buildFailed(
+                        packagePath.path,
+                        output: "Build failed for product '\(productName)' with exit code \(result.terminationStatus)"
+                    )
+                }
+            } catch let error as PackageBuilderError {
+                throw error
+            } catch {
                 throw PackageBuilderError.buildFailed(
                     packagePath.path,
-                    output: "Build failed with exit code \(result.terminationStatus)"
+                    output: "Process execution failed for product '\(productName)': \(error.localizedDescription)"
                 )
             }
-        } catch let error as PackageBuilderError {
-            throw error
-        } catch {
-            throw PackageBuilderError.buildFailed(
-                packagePath.path,
-                output: "Process execution failed: \(error.localizedDescription)"
-            )
         }
     }
 
-    private func discoverExecutables(at packagePath: URL) async throws -> [Executable] {
-        // Parse Package.swift to find executable products
-        let executableNames = try await loadExecutableProducts(at: packagePath)
-
+    private func discoverBuiltExecutables(_ executableNames: [String], at packagePath: URL) throws -> [Executable] {
         // Map executable names to their built binaries in .build/release
         let releasePath = packagePath.appendingPathComponent(".build/release")
         var executables: [Executable] = []
@@ -210,7 +213,7 @@ public struct PackageBuilder {
             .path("/usr/bin/swift"),
             arguments: ["package", "dump-package"],
             workingDirectory: .init(packagePath.path()),
-            output: .string(limit: 16 * 1024, encoding: UTF8.self)
+            output: .string(limit: 1024 * 1024, encoding: UTF8.self)
         )
 
         guard result.terminationStatus.isSuccess else {
